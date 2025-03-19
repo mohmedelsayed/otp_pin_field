@@ -87,40 +87,31 @@ class OtpPinFieldState extends State<OtpPinField>
             onTap: onFieldFocus,
             child: SizedBox(
               height: widget.fieldHeight,
-              child: Stack(
-                children: [
-                  // Custom pin fields
-                  Row(
+              child: Stack(children: [
+                Row(
                     mainAxisAlignment:
-                        widget.mainAxisAlignment ?? MainAxisAlignment.center,
-                    children: _buildBody(context),
-                  ),
-                  // Transparent TextField overlay
-                  Positioned.fill(
+                    widget.mainAxisAlignment ?? MainAxisAlignment.center,
+                    children: _buildBody(context)),
+                AbsorbPointer(
+                  child: Opacity(
+                    opacity: 0.0,
                     child: TextField(
                       controller: controller,
                       maxLength: widget.maxLength,
                       autofillHints: (widget.autoFillEnable ?? false)
                           ? const [AutofillHints.oneTimeCode]
                           : null,
-                      readOnly: !(widget.showDefaultKeyboard ?? true),
+                      readOnly: widget.showCustomKeyboard ?? true,
                       autofocus: widget.autoFocus,
-                      enableInteractiveSelection: true, // Enable paste overlay
+                      enableInteractiveSelection: false,
                       inputFormatters:
-                          widget.keyboardType == TextInputType.number
-                              ? <TextInputFormatter>[
-                                  FilteringTextInputFormatter.digitsOnly
-                                ]
-                              : null,
+                      widget.keyboardType == TextInputType.number
+                          ? <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ]
+                          : null,
                       focusNode: _focusNode,
                       keyboardType: widget.keyboardType,
-                      textInputAction: widget.textInputAction,
-                      style: TextStyle(
-                          color: Colors.transparent), // Make text invisible
-                      decoration: InputDecoration(
-                        border: InputBorder.none, // Remove borders
-                        contentPadding: EdgeInsets.zero, // Remove padding
-                      ),
                       onSubmitted: (text) {
                         debugPrint(text);
                       },
@@ -141,8 +132,8 @@ class OtpPinFieldState extends State<OtpPinField>
                       },
                     ),
                   ),
-                ],
-              ),
+                )
+              ]),
             ),
           ),
           Expanded(child: widget.middleChild ?? const SizedBox.shrink()),
@@ -195,18 +186,16 @@ class OtpPinFieldState extends State<OtpPinField>
       onTap: onFieldFocus,
       child: SizedBox(
         height: widget.fieldHeight,
-        child: Stack(
-          children: [
-            // Custom pin fields
-            Row(
+        child: Stack(children: [
+          Row(
               mainAxisAlignment:
-                  widget.mainAxisAlignment ?? MainAxisAlignment.center,
-              children: _buildBody(context),
-            ),
-            // Transparent TextField overlay
-            Positioned.fill(
+              widget.mainAxisAlignment ?? MainAxisAlignment.center,
+              children: _buildBody(context)),
+          AbsorbPointer(
+            absorbing: true,
+            child: Opacity(
+              opacity: 0.0,
               child: TextField(
-                cursorColor: Colors.transparent,
                 controller: controller,
                 maxLength: widget.maxLength,
                 autofillHints: (widget.autoFillEnable ?? false)
@@ -214,21 +203,15 @@ class OtpPinFieldState extends State<OtpPinField>
                     : null,
                 readOnly: !(widget.showDefaultKeyboard ?? true),
                 autofocus: widget.autoFocus,
-                enableInteractiveSelection: true, // Enable paste overlay
+                enableInteractiveSelection: false,
                 inputFormatters: widget.keyboardType == TextInputType.number
                     ? <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ]
+                  FilteringTextInputFormatter.digitsOnly
+                ]
                     : null,
                 focusNode: _focusNode,
-                keyboardType: widget.keyboardType,
                 textInputAction: widget.textInputAction,
-                style: const TextStyle(
-                    color: Colors.transparent), // Make text invisible
-                decoration: const InputDecoration(
-                  border: InputBorder.none, // Remove borders
-                  contentPadding: EdgeInsets.zero, // Remove padding
-                ),
+                keyboardType: widget.keyboardType,
                 onSubmitted: (text) {
                   debugPrint(text);
                 },
@@ -249,8 +232,8 @@ class OtpPinFieldState extends State<OtpPinField>
                 },
               ),
             ),
-          ],
-        ),
+          )
+        ]),
       ),
     );
   }
@@ -310,47 +293,47 @@ class OtpPinFieldState extends State<OtpPinField>
 
     Widget showCursorWidget() => widget.showCursor!
         ? _shouldHighlight(i)
-            ? cursorWidget(
-                cursorColor: widget.cursorColor,
-                cursorWidth: widget.cursorWidth,
-                index: i)
-            : const SizedBox.shrink()
+        ? cursorWidget(
+        cursorColor: widget.cursorColor,
+        cursorWidth: widget.cursorWidth,
+        index: i)
+        : const SizedBox.shrink()
         : const SizedBox.shrink();
 
     fieldBorderColor = widget.highlightBorder && _shouldHighlight(i)
         ? widget.otpPinFieldStyle!.activeFieldBorderColor
         : (pinsInputed[i].isNotEmpty &&
-                widget.otpPinFieldStyle?.filledFieldBorderColor !=
-                    Colors.transparent)
-            ? widget.otpPinFieldStyle!.filledFieldBorderColor
-            : widget.otpPinFieldStyle!.defaultFieldBorderColor;
+        widget.otpPinFieldStyle?.filledFieldBorderColor !=
+            Colors.transparent)
+        ? widget.otpPinFieldStyle!.filledFieldBorderColor
+        : widget.otpPinFieldStyle!.defaultFieldBorderColor;
 
     boxShadow = widget.highlightBorder && _shouldHighlight(i)
         ? widget.otpPinFieldStyle!.activeFieldBoxShadow
         : (pinsInputed[i].isNotEmpty &&
-                widget.otpPinFieldStyle?.filledFieldBoxShadow != null)
-            ? widget.otpPinFieldStyle!.filledFieldBoxShadow
-            : widget.otpPinFieldStyle!.defaultFieldBoxShadow;
+        widget.otpPinFieldStyle?.filledFieldBoxShadow != null)
+        ? widget.otpPinFieldStyle!.filledFieldBoxShadow
+        : widget.otpPinFieldStyle!.defaultFieldBoxShadow;
     fieldBackgroundColor = widget.highlightBorder && _shouldHighlight(i)
         ? widget.otpPinFieldStyle!.activeFieldBackgroundColor
         : (pinsInputed[i].isNotEmpty &&
-                widget.otpPinFieldStyle?.filledFieldBackgroundColor !=
-                    Colors.transparent)
-            ? widget.otpPinFieldStyle!.filledFieldBackgroundColor
-            : widget.otpPinFieldStyle!.defaultFieldBackgroundColor;
+        widget.otpPinFieldStyle?.filledFieldBackgroundColor !=
+            Colors.transparent)
+        ? widget.otpPinFieldStyle!.filledFieldBackgroundColor
+        : widget.otpPinFieldStyle!.defaultFieldBackgroundColor;
 
     fieldBorderGradient = (widget.otpPinFieldDecoration ==
-                OtpPinFieldDecoration.underlinedPinBoxDecoration
-            ? null
-            : widget.highlightBorder &&
-                    _shouldHighlight(i) &&
-                    widget.otpPinFieldStyle?.activeFieldBorderGradient != null
-                ? widget.otpPinFieldStyle!.activeFieldBorderGradient
-                : (pinsInputed[i].isNotEmpty &&
-                        widget.otpPinFieldStyle?.filledFieldBorderGradient !=
-                            null)
-                    ? widget.otpPinFieldStyle!.filledFieldBorderGradient
-                    : widget.otpPinFieldStyle?.defaultFieldBorderGradient) ??
+        OtpPinFieldDecoration.underlinedPinBoxDecoration
+        ? null
+        : widget.highlightBorder &&
+        _shouldHighlight(i) &&
+        widget.otpPinFieldStyle?.activeFieldBorderGradient != null
+        ? widget.otpPinFieldStyle!.activeFieldBorderGradient
+        : (pinsInputed[i].isNotEmpty &&
+        widget.otpPinFieldStyle?.filledFieldBorderGradient !=
+            null)
+        ? widget.otpPinFieldStyle!.filledFieldBorderGradient
+        : widget.otpPinFieldStyle?.defaultFieldBorderGradient) ??
         LinearGradient(colors: [fieldBorderColor, fieldBorderColor]);
 
     if (widget.otpPinFieldDecoration ==
@@ -409,9 +392,9 @@ class OtpPinFieldState extends State<OtpPinField>
               child: Text(
                 _getPinDisplay(i),
                 style: pinsInputed[i].isEmpty &&
-                        widget.otpPinFieldStyle?.showHintText == true
+                    widget.otpPinFieldStyle?.showHintText == true
                     ? widget.otpPinFieldStyle?.textStyle
-                        .copyWith(color: widget.otpPinFieldStyle?.hintTextColor)
+                    .copyWith(color: widget.otpPinFieldStyle?.hintTextColor)
                     : widget.otpPinFieldStyle?.textStyle,
                 textAlign: TextAlign.center,
               ),
@@ -566,7 +549,7 @@ class OtpPinFieldState extends State<OtpPinField>
               name: 'OTP Pin Field',
               'beforeTextPaste error ',
               error:
-                  'return true in beforeTextPaste order to execute copy paste ');
+              'return true in beforeTextPaste order to execute copy paste ');
         }
       } else {
         _pasteCopyCode(data);
